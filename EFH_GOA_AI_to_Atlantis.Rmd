@@ -59,10 +59,13 @@ ggplot()+
 
 # Merge GOA and AI
 
-View this first, again use points and then sf.
+View this first, again use points and then sf. Reproject the resulting raster to the Atlantis CRS.
 ```{r, fig.width=12, fig.height=6, warning = FALSE}
 origin(efh_ai) <- origin(efh_goa)
 efh <- raster::merge(efh_goa, efh_ai)
+
+# reproject to Atlantis
+efh <- efh %>% raster::projectRaster(crs = crs(atlantis_sf)@projargs)
 
 efh_sf <- efh %>% rasterToPoints() %>% data.frame() %>% set_names(c("x", "y", "cpue")) %>% 
   st_as_sf(coords = c(x = "x", y = "y"), crs = crs(efh)@projargs)
